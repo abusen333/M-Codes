@@ -1,0 +1,14 @@
+# add new row to dimentoin table as "Not Specified"
+
+
+NotSpecifiedRow = Table.InsertRows(
+Source,
+1,{
+    [
+        BranchID  = "Not Specified",
+        BranchName = "Not Specified",
+        BranchLocation= "Not Specified",
+         NameOfBusiness = "Not Specified"
+         ...... = .......
+        ]
+}
