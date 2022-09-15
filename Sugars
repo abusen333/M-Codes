@@ -11,11 +11,11 @@ Source,
         ]
 }
 -----------------------------------------
-Change all columns to ProperCase and remove ugly Characters
+Change all columns to ProperCase and remove ugly Characters 
 
 , 
   #"Beautiful Columns Names" = Table.TransformColumnNames(Source, Text.Proper), 
-  #"Remove Ugly Characters" = Table.RenameColumns(
+  #"Remove Ugly Characters!" = Table.RenameColumns(
     #"Beautiful Columns Names", 
     Table.ToRows(
       Table.AddColumn(
@@ -26,4 +26,4 @@ Change all columns to ProperCase and remove ugly Characters
     )
   )
 in
-  #"Remove Ugly Characters"
+  #"Remove Ugly Characters!"
