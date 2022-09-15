@@ -11,10 +11,19 @@ Source,
         ]
 }
 -----------------------------------------
-Change all columns to ProperCase and remove ugly  _s 
+Change all columns to ProperCase and remove ugly Characters
 
-HeadersProperCase = Table.TransformColumnNames(Source,Text.Proper),
-RenameColumns = Table.RenameColumns(HeadersProperCase, Table.ToRows(Table.AddColumn(Table.FromList(Table.ColumnNames( HeadersProperCase)),
-"New Column Name", each Text.Replace ( [Column1] , "_" , " " ))))
+, 
+  #"Beautiful Columns Names" = Table.TransformColumnNames(Source, Text.Proper), 
+  #"Remove Ugly Characters" = Table.RenameColumns(
+    #"Beautiful Columns Names", 
+    Table.ToRows(
+      Table.AddColumn(
+        Table.FromList(Table.ColumnNames(#"Beautiful Columns Names")), 
+        "New Column Name", 
+        each Text.Replace([Column1], "_", " ")
+      )
+    )
+  )
 in
-    RenameColumns
+  #"Remove Ugly Characters"
