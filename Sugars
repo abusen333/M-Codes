@@ -29,7 +29,7 @@ in
   #"Remove Ugly Characters!"
   
   ------------------------------------------------------
-  ## Flag if the column  has letter values of Not
+  # Flag if the column  has letter values of Not
   Text.Length(Text.Select([Column1],{"A".."Z"}))>0  
 -------------------------------------------------------
 
