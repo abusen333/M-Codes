@@ -1,0 +1,39 @@
+I'll show you how to get and append all CSV files from a single directory using Power Query in Power BI. This approach lets you import all files at once, which is perfect when they share the same header structure.
+
+Here's the step-by-step process:
+
+```
+// Power Query M code
+let
+    // Step 1: Get the folder path containing your CSV files
+    Source = Folder.Files("C:\YourFolderPath"),
+    
+    // Step 2: Filter to only include CSV files
+    FilteredFiles = Table.SelectRows(Source, each Text.EndsWith([Extension], ".csv")),
+    
+    // Step 3: Add a custom column that contains the data from each file
+    AddCustom = Table.AddColumn(FilteredFiles, "Data", each Csv.Document(File.Contents([Folder Path] & "\" & [Name]))),
+    
+    // Step 4: Remove other columns and expand the data column
+    RemoveColumns = Table.SelectColumns(AddCustom, {"Data"}),
+    ExpandData = Table.ExpandTableColumn(RemoveColumns, "Data", null, null)
+in
+    ExpandData
+```
+
+To implement this in Power BI:
+
+1. Click on "Get Data" → "More..." → "Blank Query"
+2. In the Power Query Editor, click "Advanced Editor"
+3. Paste the code above (replacing "C:\YourFolderPath" with your actual folder path)
+4. Click "Done"
+
+This will:
+- Read all CSV files from the specified directory
+- Filter to include only files with .csv extension
+- Load and combine all the data into a single table
+- Automatically use the headers from the files
+
+The beauty of this approach is that if you add new CSV files to the folder later, you can simply refresh your query and Power BI will automatically include the new data.
+
+Would you like me to explain any part of this process in more detail?
