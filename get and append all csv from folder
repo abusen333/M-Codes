@@ -37,3 +37,59 @@ This will:
 The beauty of this approach is that if you add new CSV files to the folder later, you can simply refresh your query and Power BI will automatically include the new data.
 
 Would you like me to explain any part of this process in more detail?
+
+
+
+ create an audit table that checks if all your CSV files were imported correctly and provides a row count for each file. This is a great way to validate your data import process.
+
+Here's how to create this audit table in Power Query:
+
+```
+// Power Query M code for audit table
+let
+    // Step 1: Get the folder path containing your CSV files
+    Source = Folder.Files("C:\YourFolderPath"),
+    
+    // Step 2: Filter to only include CSV files
+    CSVFiles = Table.SelectRows(Source, each Text.EndsWith([Extension], ".csv")),
+    
+    // Step 3: Keep only relevant columns
+    SelectedColumns = Table.SelectColumns(CSVFiles, {"Name", "Folder Path", "Date accessed", "Date modified", "Size"}),
+    
+    // Step 4: Add column with row count for each file
+    AddRowCount = Table.AddColumn(SelectedColumns, "Row Count", each 
+        let
+            FileContent = Csv.Document(File.Contents([Folder Path] & "\" & [Name])),
+            RowCount = Table.RowCount(FileContent) - 1  // Subtract 1 if the first row is headers
+        in
+            RowCount
+    ),
+    
+    // Step 5: Add a status column for validation
+    AddStatus = Table.AddColumn(AddRowCount, "Import Status", each 
+        if [Row Count] > 0 then "Imported Successfully" else "Error: No Rows Found"
+    ),
+    
+    // Step 6: Add timestamp for the audit
+    AddAuditDate = Table.AddColumn(AddStatus, "Audit Timestamp", each DateTime.LocalNow())
+in
+    AddAuditDate
+```
+
+To implement this in Power BI:
+
+1. Go to "Get Data" → "Blank Query"
+2. Open the "Advanced Editor" and paste the code above
+3. Replace "C:\YourFolderPath" with your actual folder path
+4. Click "Done"
+
+This audit table will show:
+- The name of each CSV file
+- File location, dates, and size
+- The number of rows in each file
+- Import status (successful or error)
+- Timestamp of when the audit was performed
+
+You can then create a separate query to actually import the combined data using the approach from my previous response.
+
+Would you like me to explain how to connect these two queries together or make any modifications to the audit process?
