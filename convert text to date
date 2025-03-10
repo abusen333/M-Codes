@@ -1,9 +1,10 @@
-Here's the updated Power Query M code with "stage_start_time" replaced by "colname":
 
 ```
 let
-    ExtractDateTime = (text) =>
+    Source = ..., // Your existing source step
+    AddedCustom = Table.AddColumn(Source, "ConvertedDateTime", each 
         let
+            text = [YourColumnName],
             // Extract the date part - find position after "colname"
             StartPos = Text.Length("colname"),
             DateTimeText = Text.Range(text, StartPos, 17),
@@ -20,9 +21,6 @@ let
                 Number.From(Text.Range(TimePart, 6, 2))   // Second
             )
         in
-            DateTime
+            DateTime)
 in
-    ExtractDateTime([YourColumnName])
-```
-
-Just remember to replace `[YourColumnName]` with the actual name of your text column in Power Query.
+    
