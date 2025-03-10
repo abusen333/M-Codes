@@ -1,0 +1,40 @@
+ to convert a text column containing timestamps like "_start_time04JAN2025:00:00:000..." into a proper datetime format in Power Query.
+
+Let's create a function that will parse this format correctly. The text appears to contain multiple timestamps, but we can extract the first one which seems to be in the format "DDMonYYYY:HH:MM:SS".
+
+Here's the Power Query M code you can use as a custom column:
+
+```
+let
+    ExtractDateTime = (text) =>
+        let
+            // Extract the date part - find position after "_start_time"
+            StartPos = Text.Length("stage_start_time"),
+            DateTimeText = Text.Range(text, StartPos, 17),
+            // Parse the extracted text (format like "04JAN2025:00:00:0")
+            DatePart = Text.Range(DateTimeText, 0, 9),
+            TimePart = Text.Range(DateTimeText, 10, 8),
+            // Create proper datetime
+            DateTime = #datetime(
+                Number.From(Text.Range(DatePart, 5, 4)),  // Year
+                Date.MonthOfYear(Date.FromText(Text.Range(DatePart, 2, 3))),  // Month
+                Number.From(Text.Range(DatePart, 0, 2)),  // Day
+                Number.From(Text.Range(TimePart, 0, 2)),  // Hour
+                Number.From(Text.Range(TimePart, 3, 2)),  // Minute
+                Number.From(Text.Range(TimePart, 6, 2))   // Second
+            )
+        in
+            DateTime
+in
+    ExtractDateTime([YourColumnName])
+```
+
+Replace `[YourColumnName]` with the actual name of your text column. This function:
+
+1. Identifies where the datetime information starts (after "stage_start_time")
+2. Extracts the relevant portion (17 characters)
+3. Splits it into date and time components
+4. Converts each part to the appropriate number format
+5. Constructs a proper datetime value
+
+The result will be a datetime column you can format and work with as needed in Power BI.
